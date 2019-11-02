@@ -19,7 +19,7 @@ TensorRT 5.0
 jetpack 4.2
 ```
 ### Models
-1. Convert [CenterNet] (https://github.com/xingyizhou/centernet) model to onnx (deform cov is not supported)
+1. Convert [CenterNet](https://github.com/xingyizhou/centernet) model to onnx (deform cov is not supported)
 2. Use [netron](https://github.com/lutzroeder/netron) to observe whether the output of the converted onnx model is (hm, reg, wh)
 
 ### Example
@@ -35,6 +35,7 @@ cd ..
 
 ### Related projects
 * [TensorRT-Yolov3](https://github.com/lewes6369/TensorRT-Yolov3)
-* [CenterNet](centernet)
+* [CenterNet](https://github.com/xingyizhou/centernet)
+* [centerface](https://github.com/Star-Clouds/centerface)
 * [netron](https://github.com/lutzroeder/netron)
 * [cpp-optparse](https://github.com/weisslj/cpp-optparse)
