@@ -12,9 +12,9 @@
 
 int main(int argc, const char** argv){
     optparse::OptionParser parser;
-    parser.add_option("-i", "--input-engine-file").dest("engineFile").set_default("model/ctdet_helmet.engine")
+    parser.add_option("-i", "--input-engine-file").dest("engineFile").set_default("model/centerface.engine")
             .help("the path of onnx file");
-    parser.add_option("-img").dest("imgFile").set_default("000138.jpg");
+    parser.add_option("-img").dest("imgFile").set_default("test.jpg");
     parser.add_option("-cap").dest("capFile").set_default("test.h264");
     optparse::Values options = parser.parse_args(argc, argv);
     if(options["engineFile"].size() == 0){
@@ -22,7 +22,7 @@ int main(int argc, const char** argv){
         exit(-1);
     }
 
-    cv::RNG rng(57);
+    cv::RNG rng(244);
     std::vector<cv::Scalar> color;
     for(int i=0; i<ctdet::classNum;++i)color.push_back(randomColor(rng));
 
@@ -36,7 +36,7 @@ int main(int argc, const char** argv){
     if(options["imgFile"].size()>0)
     {
         img = cv::imread(options["imgFile"]);
-        auto inputData = prepareImage(img);
+        auto inputData = prepareImage(img,net.forwardFace);
 
         net.doInference(inputData.data(), outputData.get());
         net.printTime();
@@ -46,9 +46,9 @@ int main(int argc, const char** argv){
         result.resize(num_det);
         memcpy(result.data(), &outputData[1], num_det * sizeof(Detection));
 
-        postProcess(result,img);
+        postProcess(result,img,net.forwardFace);
 
-        drawImg(result,img,color);
+        drawImg(result,img,color,net.forwardFace);
 
         cv::imshow("result",img);
         cv::waitKey(0);
@@ -58,7 +58,7 @@ int main(int argc, const char** argv){
         cv::VideoCapture cap(options["capFile"]);
         while (cap.read(img))
         {
-            auto inputData = prepareImage(img);
+            auto inputData = prepareImage(img,net.forwardFace);
 
             net.doInference(inputData.data(), outputData.get());
             net.printTime();
@@ -68,9 +68,9 @@ int main(int argc, const char** argv){
             result.resize(num_det);
             memcpy(result.data(), &outputData[1], num_det * sizeof(Detection));
 
-            postProcess(result,img);
+            postProcess(result,img,net.forwardFace);
 
-            drawImg(result,img,color);
+            drawImg(result,img,color,net.forwardFace);
 
             cv::imshow("result",img);
             if((cv::waitKey(1)& 0xff) == 27){

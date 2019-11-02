@@ -1,6 +1,7 @@
 # TensorRT-CenterNet
 ### demo (GT 1070)
-![image](img/show.gif)
+* ![image](img/show.gif)
+* ![image](img/show2.png)
 
 ### Performance
 | backbone       | input_size | GPU      | mode   | inference Time |

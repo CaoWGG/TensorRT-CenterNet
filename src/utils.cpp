@@ -18,7 +18,7 @@ dim3 cudaGridSize(uint n)
     return d;
 }
 
-std::vector<float> prepareImage(cv::Mat& img)
+std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace)
 {
     using namespace cv;
 
@@ -37,7 +37,10 @@ std::vector<float> prepareImage(cv::Mat& img)
     resized.copyTo(cropped(rect));
 
     cv::Mat img_float;
-    cropped.convertTo(img_float, CV_32FC3, 1/255.0);
+    if(forwardFace)
+        cropped.convertTo(img_float, CV_32FC3, 1.);
+    else
+        cropped.convertTo(img_float, CV_32FC3,1./255.);
 
     //HWC TO CHW
     vector<Mat> input_channels(channel);
@@ -55,9 +58,10 @@ std::vector<float> prepareImage(cv::Mat& img)
     return result;
 }
 
-void postProcess(std::vector<Detection> & result,const cv::Mat& img)
+void postProcess(std::vector<Detection> & result,const cv::Mat& img, const bool& forwardFace)
 {
     using namespace cv;
+    int mark;
     int inputSize = ctdet::inputSize;
     float scale = min(float(inputSize)/img.cols,float(inputSize)/img.rows);
     float dx = (inputSize - scale * img.cols) / 2;
@@ -76,6 +80,19 @@ void postProcess(std::vector<Detection> & result,const cv::Mat& img)
         item.bbox.y1  = y1 ;
         item.bbox.x2  = x2 ;
         item.bbox.y2  = y2 ;
+        if(forwardFace){
+            float x,y;
+            for(mark=0;mark<5; ++mark ){
+                 x = (item.marks[mark].x - dx) / scale ;
+                 y = (item.marks[mark].y - dy) / scale ;
+                 x = (x > 0 ) ? x : 0 ;
+                 y = (y > 0 ) ? y : 0 ;
+                 x = (x < img.cols  ) ? x : img.cols - 1 ;
+                 y = (y < img.rows ) ? y  : img.rows - 1 ;
+                item.marks[mark].x = x ;
+                item.marks[mark].y = y ;
+            }
+        }
     }
 }
 
@@ -84,24 +101,33 @@ cv::Scalar randomColor(cv::RNG& rng) {
     return cv::Scalar(icolor & 255, (icolor >> 8) & 255, (icolor >> 16) & 255);
 }
 
-void drawImg(const std::vector<Detection> & result,cv::Mat& img,const std::vector<cv::Scalar>& color )
+void drawImg(const std::vector<Detection> & result,cv::Mat& img,const std::vector<cv::Scalar>& color, const bool& forwardFace)
 {
+    int mark;
     int box_think = (img.rows+img.cols) * .001 ;
     float label_scale = img.rows * 0.0009;
     int base_line ;
     for (const auto &item : result) {
-    std::string label;
-    std::stringstream stream;
-    stream << ctdet::className[item.classId] << " " << item.prob << std::endl;
-    std::getline(stream,label);
+        std::string label;
+        std::stringstream stream;
+        stream << ctdet::className[item.classId] << " " << item.prob << std::endl;
+        std::getline(stream,label);
 
-    auto size = cv::getTextSize(label,cv::FONT_HERSHEY_COMPLEX,label_scale,1,&base_line);
+        auto size = cv::getTextSize(label,cv::FONT_HERSHEY_COMPLEX,label_scale,1,&base_line);
 
-    cv::rectangle(img, cv::Point(item.bbox.x1,item.bbox.y1),
-                  cv::Point(item.bbox.x2 ,item.bbox.y2),
-                  color[item.classId], box_think, 8, 0);
-    cv::putText(img,label,
-                cv::Point(item.bbox.x2,item.bbox.y2 - size.height),
-                cv::FONT_HERSHEY_COMPLEX, label_scale , color[item.classId], box_think/3, 8, 0);
+        cv::rectangle(img, cv::Point(item.bbox.x1,item.bbox.y1),
+                      cv::Point(item.bbox.x2 ,item.bbox.y2),
+                      color[item.classId], box_think, 8, 0);
+        if(!forwardFace){
+            cv::putText(img,label,
+                    cv::Point(item.bbox.x2,item.bbox.y2 - size.height),
+                    cv::FONT_HERSHEY_COMPLEX, label_scale , color[item.classId], box_think/3, 8, 0);
+        }
+        if(forwardFace)
+        {
+            for(mark=0;mark<5; ++mark )
+            cv::circle(img, cv::Point(item.marks[mark].x, item.marks[mark].y), 2, cv::Scalar(255, 255, 0), 2);
+        }
+
     }
 }

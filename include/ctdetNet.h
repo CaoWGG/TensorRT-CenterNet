@@ -46,7 +46,7 @@ namespace ctdet
         };
 
         int64_t outputBufferSize;
-
+        bool forwardFace;
     private:
 
         void InitEngine();
@@ -65,7 +65,6 @@ namespace ctdet
 
         int runIters;
         Profiler mProfiler;
-
     };
 
 }

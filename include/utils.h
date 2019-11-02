@@ -149,16 +149,23 @@ struct Box{
     float x2;
     float y2;
 };
+struct landmarks{
+    float x;
+    float y;
+};
 struct Detection{
     //x1 y1 x2 y2
     Box bbox;
     //float objectness;
+    landmarks marks[5];
     int classId;
     float prob;
 };
+
+
 extern dim3 cudaGridSize(uint n);
-extern std::vector<float> prepareImage(cv::Mat& img);
-extern void postProcess(std::vector<Detection> & result,const cv::Mat& img);
-extern void drawImg(const std::vector<Detection> & result,cv::Mat& img,const std::vector<cv::Scalar>& color );
+extern std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace);
+extern void postProcess(std::vector<Detection> & result,const cv::Mat& img, const bool& forwardFace);
+extern void drawImg(const std::vector<Detection> & result,cv::Mat& img,const std::vector<cv::Scalar>& color, const bool& forwardFace);
 extern cv::Scalar randomColor(cv::RNG& rng);
 #endif //CTDET_TRT_UTILS_H

@@ -12,7 +12,7 @@ namespace ctdet
 {
 
     ctdetNet::ctdetNet(const std::string &onnxFile, const std::string &calibFile,
-            ctdet::RUN_MODE mode):mContext(nullptr),mEngine(nullptr),mRunTime(nullptr),
+            ctdet::RUN_MODE mode):forwardFace(false),mContext(nullptr),mEngine(nullptr),mRunTime(nullptr),
                                   runMode(mode),runIters(0)
     {
 
@@ -83,7 +83,7 @@ namespace ctdet
     }
 
     ctdetNet::ctdetNet(const std::string &engineFile)
-            :mContext(nullptr),mEngine(nullptr),mRunTime(nullptr),runMode(RUN_MODE::FLOAT32),runIters(0)
+            :forwardFace(false),mContext(nullptr),mEngine(nullptr),mRunTime(nullptr),runMode(RUN_MODE::FLOAT32),runIters(0)
     {
         using namespace std;
         fstream file;
@@ -116,7 +116,9 @@ namespace ctdet
         assert(mContext != nullptr);
         mContext->setProfiler(&mProfiler);
         int nbBindings = mEngine->getNbBindings();
-        assert(nbBindings == 4);
+
+        if (nbBindings > 4) forwardFace= true;
+
         mCudaBuffers.resize(nbBindings);
         mBindBufferSizes.resize(nbBindings);
         int64_t totalSize = 0;
@@ -140,9 +142,15 @@ namespace ctdet
         CUDA_CHECK(cudaMemcpyAsync(mCudaBuffers[inputIndex], inputData, mBindBufferSizes[inputIndex], cudaMemcpyHostToDevice, mCudaStream));
         mContext->execute(batchSize, &mCudaBuffers[inputIndex]);
         CUDA_CHECK(cudaMemset(cudaOutputBuffer, 0, sizeof(float)));
-        CTdetforward_gpu(static_cast<const float *>(mCudaBuffers[1]),static_cast<const float *>(mCudaBuffers[2]),
+        if (forwardFace){
+            CTfaceforward_gpu(static_cast<const float *>(mCudaBuffers[1]),static_cast<const float *>(mCudaBuffers[2]),
+                              static_cast<const float *>(mCudaBuffers[3]),static_cast<const float *>(mCudaBuffers[4]),static_cast<float *>(cudaOutputBuffer),
+                              ouputSize,ouputSize,classNum,kernelSize,visThresh);
+        } else{
+            CTdetforward_gpu(static_cast<const float *>(mCudaBuffers[1]),static_cast<const float *>(mCudaBuffers[2]),
                          static_cast<const float *>(mCudaBuffers[3]),static_cast<float *>(cudaOutputBuffer),
                          ouputSize,ouputSize,classNum,kernelSize,visThresh);
+        }
 
         CUDA_CHECK(cudaMemcpyAsync(outputData, cudaOutputBuffer, outputBufferSize, cudaMemcpyDeviceToHost, mCudaStream));
 
