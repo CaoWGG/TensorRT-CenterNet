@@ -30,8 +30,12 @@ cd TensorRT-CenterNet
 mkdir build
 cd build && cmake .. && make
 cd ..
+##cthelmet
 ./buildEngine -i model/ctdet_helmet.onnx -o model/ctdet_helmet.engine
-./runDet -i model/ctdet_helmet.engine -img 000138.jpg -cap test.h264
+./runDet -i model/ctdet_helmet.engine -img test.jpg -cap test.h264
+##centerface
+./buildEngine -i model/centerface.onnx -o model/centerface.engine
+./runDet -i model/centerface.engine -img test.jpg -cap test.h264
 ```
 
 ### Related projects
