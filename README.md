@@ -30,7 +30,7 @@ mkdir build
 cd build && cmake .. && make
 cd ..
 ./buildEngine -i model/ctdet_helmet.onnx -o model/ctdet_helmet.engine
-./runDet -i model/ctdet_helmet.engine -img 000138.jpg -cap test/h264
+./runDet -i model/ctdet_helmet.engine -img 000138.jpg -cap test.h264
 ```
 
 ### Related projects
