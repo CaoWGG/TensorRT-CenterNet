@@ -89,7 +89,7 @@ __global__ void CTfaceforward_kernel(const float *hm, const float *wh,const floa
             det->bbox.y2 = c_y + scale_h/2;
             det->prob = objProb;
             det->classId = cls;
-            for(mark_id=0 ; mark_id < 5 ; mark_id ++){
+            for(mark_id=0 ; mark_id < 5 ; ++mark_id ){
                 det->marks[mark_id].x = det->bbox.x1 + landmarks[idx + (2*mark_id+1)*stride]*scale_w;
                 det->marks[mark_id].y = det->bbox.y1 + landmarks[idx + (2*mark_id)*stride]*scale_h;
             }
