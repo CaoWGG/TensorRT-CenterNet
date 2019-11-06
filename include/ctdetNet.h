@@ -32,6 +32,20 @@ namespace ctdet
 
         ctdetNet(const std::string& engineFile);
 
+        ~ctdetNet(){
+            cudaStreamSynchronize(mCudaStream);
+            cudaStreamDestroy(mCudaStream);
+            for(auto& item : mCudaBuffers)
+                cudaFree(item);
+            cudaFree(cudaOutputBuffer);
+            if(!mRunTime)
+                mRunTime->destroy();
+            if(!mContext)
+                mContext->destroy();
+            if(!mEngine)
+                mEngine->destroy();
+        }
+
         void saveEngine(const std::string& fileName);
 
         void doInference(const void* inputData, void* outputData);
