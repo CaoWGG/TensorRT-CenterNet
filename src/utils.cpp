@@ -4,6 +4,7 @@
 #include <utils.h>
 #include <ctdetConfig.h>
 #include <sstream>
+
 dim3 cudaGridSize(uint n)
 {
     uint k = (n - 1) /BLOCK + 1;
@@ -20,19 +21,18 @@ dim3 cudaGridSize(uint n)
 
 std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace)
 {
-    using namespace cv;
 
     int channel = ctdet::channel ;
     int inputSize = ctdet::inputSize;
 
-    float scale = min(float(inputSize)/img.cols,float(inputSize)/img.rows);
+    float scale = std::min(float(inputSize)/img.cols,float(inputSize)/img.rows);
     auto scaleSize = cv::Size(img.cols * scale,img.rows * scale);
 
     cv::Mat resized;
     cv::resize(img, resized,scaleSize,0,0);
 
     cv::Mat cropped = cv::Mat::zeros(inputSize,inputSize,CV_8UC3);
-    Rect rect((inputSize- scaleSize.width)/2, (inputSize-scaleSize.height)/2, scaleSize.width,scaleSize.height);
+    cv::Rect rect((inputSize- scaleSize.width)/2, (inputSize-scaleSize.height)/2, scaleSize.width,scaleSize.height);
 
     resized.copyTo(cropped(rect));
 
@@ -43,7 +43,7 @@ std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace)
         cropped.convertTo(img_float, CV_32FC3,1./255.);
 
     //HWC TO CHW
-    std::vector<Mat> input_channels(channel);
+    std::vector<cv::Mat> input_channels(channel);
     cv::split(img_float, input_channels);
 
     // normalize
@@ -60,10 +60,10 @@ std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace)
 
 void postProcess(std::vector<Detection> & result,const cv::Mat& img, const bool& forwardFace)
 {
-    using namespace cv;
+
     int mark;
     int inputSize = ctdet::inputSize;
-    float scale = min(float(inputSize)/img.cols,float(inputSize)/img.rows);
+    float scale = std::min(float(inputSize)/img.cols,float(inputSize)/img.rows);
     float dx = (inputSize - scale * img.cols) / 2;
     float dy = (inputSize - scale * img.rows) / 2;
     for(auto&item:result)

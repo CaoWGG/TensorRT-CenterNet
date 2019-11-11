@@ -15,6 +15,7 @@
 #include <assert.h>
 #include "NvInfer.h"
 #include <opencv2/opencv.hpp>
+#include <vector>
 
 
 #ifndef BLOCK
