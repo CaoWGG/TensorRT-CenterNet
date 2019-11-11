@@ -6,6 +6,7 @@
 #define CTDET_TRT_UTILS_H
 
 #include <map>
+#include <numeric>
 #include <iostream>
 #include <iomanip>
 #include <algorithm>

@@ -43,15 +43,15 @@ std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace)
         cropped.convertTo(img_float, CV_32FC3,1./255.);
 
     //HWC TO CHW
-    vector<Mat> input_channels(channel);
+    std::vector<Mat> input_channels(channel);
     cv::split(img_float, input_channels);
 
     // normalize
-    vector<float> result(inputSize*inputSize*channel);
+    std::vector<float> result(inputSize*inputSize*channel);
     auto data = result.data();
     int channelLength = inputSize * inputSize;
     for (int i = 0; i < channel; ++i) {
-        Mat normed_channel = (input_channels[i]-ctdet::mean[i])/ctdet::std[i];
+        cv::Mat normed_channel = (input_channels[i]-ctdet::mean[i])/ctdet::std[i];
         memcpy(data,normed_channel.data,channelLength*sizeof(float));
         data += channelLength;
     }
