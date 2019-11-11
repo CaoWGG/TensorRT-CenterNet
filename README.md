@@ -6,8 +6,8 @@
 ### Performance
 | backbone       | input_size | GPU      | mode   | inference Time |
 |----------------|------------|----------|--------|---------------|
-| mobilenetv2    | 512x512    | gtx 1070 |float32 |    3.798ms    |
-| mobilenetv2    | 512x512    | jetson TX2|float16 |    22ms      | 
+| [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)    | 512x512    | gtx 1070 |float32 |    3.798ms    |
+| [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)   | 512x512    | jetson TX2|float16 |    22ms      | 
 
 ### Enviroments
 1. gtx 1070
