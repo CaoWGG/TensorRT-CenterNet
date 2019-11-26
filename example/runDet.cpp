@@ -13,7 +13,7 @@
 int main(int argc, const char** argv){
     optparse::OptionParser parser;
     parser.add_option("-e", "--input-engine-file").dest("engineFile").set_default("model/centerface.engine")
-            .help("the path of onnx file");
+            .help("the path of engine file");
     parser.add_option("-i", "--input-img-file").dest("imgFile").set_default("test.jpg");
     parser.add_option("-c", "--input-video-file").dest("capFile").set_default("test.h264");
     optparse::Values options = parser.parse_args(argc, argv);
