@@ -36,6 +36,8 @@ cd ..
 ##centerface
 ./buildEngine -i model/centerface.onnx -o model/centerface.engine
 ./runDet -e model/centerface.engine -i test.jpg -c test.h264
+## a simple python demo (need cv2 numpy)
+python3 run.py
 ```
 
 ### Related projects
