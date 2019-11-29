@@ -54,6 +54,10 @@ include_directories(include ${OpenCV_INCLUDE_DIRS} ${CUDA_INCLUDE_DIRS} ${TENSOR
 file(GLOB CPP_SRC src/*.cpp)
 file(GLOB CU_SRC src/*.cu)
 
+cuda_add_library(ctdet SHARED src/python_api.cpp ${CPP_SRC} ${CU_SRC})
+target_include_directories(ctdet PUBLIC ${CUDA_INCLUDE_DIRS} ${TENSORRT_INCLUDE_DIR} ${CUDNN_INCLUDE_DIR})
+target_link_libraries(ctdet ${TENSORRT_LIBRARY} ${OpenCV_LIBS})
+
 cuda_add_executable(buildEngine example/buildEngine.cpp ${CPP_SRC} ${CU_SRC})
 target_link_libraries(buildEngine ${OpenCV_LIBS} ${TENSORRT_LIBRARY})
 

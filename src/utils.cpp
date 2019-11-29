@@ -96,6 +96,47 @@ void postProcess(std::vector<Detection> & result,const cv::Mat& img, const bool&
     }
 }
 
+void postProcess(std::vector<Detection> & result,const int &img_w ,const int& img_h, const bool& forwardFace)
+{
+
+
+    int mark;
+    int inputSize = ctdet::inputSize;
+    float scale = std::min(float(inputSize)/img_w,float(inputSize)/img_h);
+    float dx = (inputSize - scale * img_w) / 2;
+    float dy = (inputSize - scale * img_h) / 2;
+    //printf("%f %f %f %d %d \n",scale,dx,dy,img_w,img_h);
+    for(auto&item:result)
+    {
+
+        float x1 = (item.bbox.x1 - dx) / scale ;
+        float y1 = (item.bbox.y1 - dy) / scale ;
+        float x2 = (item.bbox.x2 - dx) / scale ;
+        float y2 = (item.bbox.y2 - dy) / scale ;
+        x1 = (x1 > 0 ) ? x1 : 0 ;
+        y1 = (y1 > 0 ) ? y1 : 0 ;
+        x2 = (x2 < img_w  ) ? x2 : img_w - 1 ;
+        y2 = (y2 < img_h ) ? y2  : img_h - 1 ;
+        item.bbox.x1  = x1 ;
+        item.bbox.y1  = y1 ;
+        item.bbox.x2  = x2 ;
+        item.bbox.y2  = y2 ;
+        if(forwardFace){
+            float x,y;
+            for(mark=0;mark<5; ++mark ){
+                x = (item.marks[mark].x - dx) / scale ;
+                y = (item.marks[mark].y - dy) / scale ;
+                x = (x > 0 ) ? x : 0 ;
+                y = (y > 0 ) ? y : 0 ;
+                x = (x < img_w  ) ? x : img_w - 1 ;
+                y = (y < img_h ) ? y  : img_h - 1 ;
+                item.marks[mark].x = x ;
+                item.marks[mark].y = y ;
+            }
+        }
+    }
+}
+
 cv::Scalar randomColor(cv::RNG& rng) {
     int icolor = (unsigned) rng;
     return cv::Scalar(icolor & 255, (icolor >> 8) & 255, (icolor >> 16) & 255);
