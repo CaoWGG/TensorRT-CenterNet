@@ -49,6 +49,12 @@ namespace nvinfer1
         {
             auto img = cv::imread(imgPaths[j]);
             auto inputData = prepareImage(img,forwardFace);
+            if (inputData.size() != inputCount)
+            {
+                std::cout << "InputSize error. check include/ctdetConfig.h" << std::endl;
+                return false;
+            }
+            //assert(inputData.size() == inputCount);
             memcpy(ptr,inputData.data(),inputData.size()*sizeof(float));
             ptr += inputData.size();
             std::cout << "load image " << imgPaths[j] << "  " << (j+1)*100./imgPaths.size() << "%" << std::endl;
