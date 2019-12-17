@@ -7,6 +7,7 @@
 | backbone       | input_size | GPU      | mode   | inference Time |
 |----------------|------------|----------|--------|---------------|
 | [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)    | 512x512    | gtx 1070 |float32 |    3.798ms    |
+| [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)    | 512x512    | gtx 1070 |int8    |    1.75ms    |
 | [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)   | 512x512    | jetson TX2|float16 |    22ms      | 
 
 ### Enviroments
@@ -50,7 +51,11 @@ cd build && cmake .. && make
 cd ..
 
 ##cthelmet   | config include/ctdetConfig.h
-./buildEngine -i model/ctdet_helmet.onnx -o model/ctdet_helmet.engine
+## flaot32
+./buildEngine -i model/ctdet_helmet.onnx -o model/ctdet_helmet.engine -m 0
+./runDet -e model/ctdet_helmet.engine -i test.jpg -c test.h264
+## int8
+./buildEngine -i model/ctdet_helmet.onnx -o model/ctdet_helmet.engine -m 2 -c calib_img_list.txt
 ./runDet -e model/ctdet_helmet.engine -i test.jpg -c test.h264
 
 ##centerface | config include/ctdetConfig.h 

@@ -6,6 +6,7 @@
 #include <ctdetLayer.h>
 #include <assert.h>
 #include <fstream>
+#include <entroyCalibrator.h>
 static Logger gLogger;
 
 namespace ctdet
@@ -34,8 +35,8 @@ namespace ctdet
 
         builder->setMaxBatchSize(maxBatchSize);
         builder->setMaxWorkspaceSize(1 << 30);// 1G
-
-
+        nvinfer1::int8EntroyCalibrator *calibrator = nullptr;
+        if(calibFile.size()>0) calibrator = new nvinfer1::int8EntroyCalibrator(maxBatchSize,calibFile,"calib.table");
         if (runMode== RUN_MODE::INT8)
         {
             //nvinfer1::IInt8Calibrator* calibrator;
@@ -43,7 +44,7 @@ namespace ctdet
             if (!builder->platformHasFastInt8())
                 std::cout << "Notice: the platform do not has fast for int8" << std::endl;
             builder->setInt8Mode(true);
-            builder->setInt8Calibrator(nullptr);
+            builder->setInt8Calibrator(calibrator);
         }
         else if (runMode == RUN_MODE::FLOAT16)
         {
@@ -63,6 +64,10 @@ namespace ctdet
         }
         std::cout << "End building engine..." << std::endl;
 
+        if(calibrator){
+            delete calibrator;
+            calibrator = nullptr;
+        }
         // We don't need the network any more, and we can destroy the parser.
 
         parser->destroy();

@@ -17,6 +17,7 @@ int main(int argc, const char** argv)
             .help("the path of engine file");
     parser.add_option("-m", "--mode").dest("mode").set_default<int>(0)
             .help("run-mode, type int");
+    parser.add_option("-c", "--calib").dest("calibFile").help("calibFile, type str");
     optparse::Values options = parser.parse_args(argc, argv);
     if(options["onnxFile"].size() == 0){
         std::cout << "no file input" << std::endl;
@@ -27,7 +28,7 @@ int main(int argc, const char** argv)
     if(options["mode"] == "1" ) mode = ctdet::RUN_MODE::FLOAT16;
     if(options["mode"] == "2" ) mode = ctdet::RUN_MODE::INT8;
 
-    ctdet::ctdetNet net(options["onnxFile"], "" ,mode);
+    ctdet::ctdetNet net(options["onnxFile"], options["calibFile"] ,mode);
     net.saveEngine(options["outputFile"]);
 
     std::cout << "save  " << options["outputFile"] <<std::endl;
