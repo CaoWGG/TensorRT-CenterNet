@@ -56,6 +56,7 @@ namespace nvinfer1
             }
             //assert(inputData.size() == inputCount);
             memcpy(ptr,inputData.data(),inputData.size()*sizeof(float));
+
             ptr += inputData.size();
             std::cout << "load image " << imgPaths[j] << "  " << (j+1)*100./imgPaths.size() << "%" << std::endl;
         }

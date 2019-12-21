@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <fstream>
 #include <entroyCalibrator.h>
+
 static Logger gLogger;
 
 namespace ctdet
@@ -14,7 +15,7 @@ namespace ctdet
 
     ctdetNet::ctdetNet(const std::string &onnxFile, const std::string &calibFile,
             ctdet::RUN_MODE mode):forwardFace(false),mContext(nullptr),mEngine(nullptr),mRunTime(nullptr),
-                                  runMode(mode),runIters(0)
+                                  runMode(mode),runIters(0),mPlugins(nullptr)
     {
 
         const int maxBatchSize = 1;
@@ -23,9 +24,8 @@ namespace ctdet
         nvinfer1::IBuilder* builder = nvinfer1::createInferBuilder(gLogger);
         nvinfer1::INetworkDefinition* network = builder->createNetwork();
 
-
+        mPlugins = nvonnxparser::createPluginFactory(gLogger);
         auto parser = nvonnxparser::createParser(*network, gLogger);
-        std::cout << "Begin parsing model..." << std::endl;
         if (!parser->parseFromFile(onnxFile.c_str(), verbosity))
         {
             std::string msg("failed to parse onnx file");
@@ -35,6 +35,7 @@ namespace ctdet
 
         builder->setMaxBatchSize(maxBatchSize);
         builder->setMaxWorkspaceSize(1 << 30);// 1G
+
         nvinfer1::int8EntroyCalibrator *calibrator = nullptr;
         if(calibFile.size()>0) calibrator = new nvinfer1::int8EntroyCalibrator(maxBatchSize,calibFile,"calib.table");
         if (runMode== RUN_MODE::INT8)
@@ -70,17 +71,17 @@ namespace ctdet
         }
         // We don't need the network any more, and we can destroy the parser.
 
-        parser->destroy();
+
         // Serialize the engine, then close everything down.
         modelStream = engine->serialize();
         engine->destroy();
         network->destroy();
         builder->destroy();
+        parser->destroy();
         assert(modelStream != nullptr);
         mRunTime = nvinfer1::createInferRuntime(gLogger);
         assert(mRunTime != nullptr);
-        mEngine= mRunTime->deserializeCudaEngine(modelStream->data(), modelStream->size(), nullptr);
-
+        mEngine= mRunTime->deserializeCudaEngine(modelStream->data(), modelStream->size(), mPlugins);
         assert(mEngine != nullptr);
         modelStream->destroy();
         InitEngine();
@@ -88,7 +89,8 @@ namespace ctdet
     }
 
     ctdetNet::ctdetNet(const std::string &engineFile)
-            :forwardFace(false),mContext(nullptr),mEngine(nullptr),mRunTime(nullptr),runMode(RUN_MODE::FLOAT32),runIters(0)
+            :forwardFace(false),mContext(nullptr),mEngine(nullptr),mRunTime(nullptr),runMode(RUN_MODE::FLOAT32),runIters(0),
+            mPlugins(nullptr)
     {
         using namespace std;
         fstream file;
@@ -107,10 +109,11 @@ namespace ctdet
 
         file.close();
 
+        mPlugins = nvonnxparser::createPluginFactory(gLogger);
         std::cout << "deserializing" << std::endl;
         mRunTime = nvinfer1::createInferRuntime(gLogger);
         assert(mRunTime != nullptr);
-        mEngine= mRunTime->deserializeCudaEngine(data.get(), length, nullptr);
+        mEngine= mRunTime->deserializeCudaEngine(data.get(), length, mPlugins);
         assert(mEngine != nullptr);
         InitEngine();
     }

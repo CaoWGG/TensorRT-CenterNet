@@ -13,6 +13,7 @@
 #include "NvOnnxParser.h"
 #include <ctdetConfig.h>
 #include <utils.h>
+#include "NvOnnxParserRuntime.h"
 
 namespace ctdet
 {
@@ -44,6 +45,8 @@ namespace ctdet
                 mContext->destroy();
             if(!mEngine)
                 mEngine->destroy();
+            if(!mPlugins)
+                mPlugins->destroy();
         }
 
         void saveEngine(const std::string& fileName);
@@ -71,6 +74,7 @@ namespace ctdet
 
         RUN_MODE runMode;
 
+        nvonnxparser::IPluginFactory *mPlugins;
         std::vector<void*> mCudaBuffers;
         std::vector<int64_t> mBindBufferSizes;
         void * cudaOutputBuffer;

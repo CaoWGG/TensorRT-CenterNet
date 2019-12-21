@@ -26,6 +26,7 @@ namespace nvinfer1 {
         void writeCalibrationCache(const void *ptr, std::size_t length) override;
 
     private:
+
         bool forwardFace;
 
         int batchSize;

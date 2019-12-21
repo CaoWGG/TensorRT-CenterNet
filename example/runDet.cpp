@@ -12,8 +12,8 @@
 
 int main(int argc, const char** argv){
     optparse::OptionParser parser;
-    parser.add_option("-e", "--input-engine-file").dest("engineFile").set_default("model/centerface.engine")
-            .help("the path of engine file");
+    parser.add_option("-e", "--input-engine-file").dest("engineFile").set_default("test.engine")
+            .help("the path of onnx file");
     parser.add_option("-i", "--input-img-file").dest("imgFile").set_default("test.jpg");
     parser.add_option("-c", "--input-video-file").dest("capFile").set_default("test.h264");
     optparse::Values options = parser.parse_args(argc, argv);
@@ -23,8 +23,9 @@ int main(int argc, const char** argv){
     }
 
     cv::RNG rng(244);
-    std::vector<cv::Scalar> color;
-    for(int i=0; i<ctdet::classNum;++i)color.push_back(randomColor(rng));
+    std::vector<cv::Scalar> color = { cv::Scalar(255, 0,0),cv::Scalar(0, 255,0)};
+    //for(int i=0; i<ctdet::classNum;++i)color.push_back(randomColor(rng));
+
 
     cv::namedWindow("result",cv::WINDOW_NORMAL);
     cv::resizeWindow("result",1024,768);
@@ -64,8 +65,11 @@ int main(int argc, const char** argv){
             net.printTime();
 
             int num_det = static_cast<int>(outputData[0]);
+
             std::vector<Detection> result;
+
             result.resize(num_det);
+
             memcpy(result.data(), &outputData[1], num_det * sizeof(Detection));
 
             postProcess(result,img,net.forwardFace);

@@ -38,7 +38,7 @@ __global__ void CTdetforward_kernel(const float *hm, const float *reg,const floa
             Detection* det =  (Detection*)(data);
             c_x = grid_x + reg[idx] ; c_y  = grid_y + reg[idx+stride];
             det->bbox.x1 = (c_x - wh[idx]/2)*4;
-            det->bbox.y1 = (c_y - wh[idx+stride]/2)*4 ;
+            det->bbox.y1 = (c_y - wh[idx+stride]/2)*4;
             det->bbox.x2 = (c_x + wh[idx]/2)*4;
             det->bbox.y2 = (c_y + wh[idx+stride]/2)*4;
             det->classId = cls;
@@ -89,7 +89,7 @@ __global__ void CTfaceforward_kernel(const float *hm, const float *wh,const floa
             det->bbox.y2 = c_y + scale_h/2;
             det->prob = objProb;
             det->classId = cls;
-            for(mark_id=0 ; mark_id < 5 ; ++mark_id ){
+            for(mark_id=0 ; mark_id < 5 ; ++ mark_id){
                 det->marks[mark_id].x = det->bbox.x1 + landmarks[idx + (2*mark_id+1)*stride]*scale_w;
                 det->marks[mark_id].y = det->bbox.y1 + landmarks[idx + (2*mark_id)*stride]*scale_h;
             }

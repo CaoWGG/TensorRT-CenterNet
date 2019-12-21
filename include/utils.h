@@ -6,7 +6,6 @@
 #define CTDET_TRT_UTILS_H
 
 #include <map>
-#include <numeric>
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
@@ -15,7 +14,6 @@
 #include <assert.h>
 #include "NvInfer.h"
 #include <opencv2/opencv.hpp>
-#include <vector>
 
 
 #ifndef BLOCK
@@ -163,6 +161,7 @@ struct Detection{
     float prob;
     landmarks marks[5];
 };
+
 
 extern dim3 cudaGridSize(uint n);
 extern std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace);

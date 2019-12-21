@@ -24,7 +24,7 @@ class detRESULT(Structure):
                 ("det", POINTER(DETECTION))]
 
 
-lib=CDLL("libctdet.so",RTLD_GLOBAL)
+lib=CDLL("lib/libctdet.so",RTLD_GLOBAL)
 init_net=lib.initNet
 init_net.argtypes = [c_char_p]
 init_net.restype = c_void_p

@@ -8,39 +8,27 @@
 |----------------|------------|----------|--------|---------------|
 | [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)    | 512x512    | gtx 1070 |float32 |    3.798ms    |
 | [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)    | 512x512    | gtx 1070 |int8    |    1.75ms    |
-| [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)   | 512x512    | jetson TX2|float16 |    22ms      | 
+| [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)   | 512x512    | jetson TX2|float16 |    22ms      |
+| [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)       | 512x512    | gtx 1070 |float32 |    24ms    |
+| [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)       | 512x512    | gtx 1070 |int8    |    19.6ms    |
+1. support deform conv v2
+2. no nms
 
 ### Enviroments
 1. gtx 1070
 ```
 ubuntu 1604
 TensorRT 5.0
+onnx-tensorrt v5.0
 ```
 2. jetson TX2
 ```
 jetpack 4.2
 ```
+
 ### Models
-1. Convert [CenterNet](https://github.com/xingyizhou/centernet) model to onnx (deform conv is not support)
+1. Convert [CenterNet](https://github.com/xingyizhou/centernet) model to onnx.
 2. Use [netron](https://github.com/lutzroeder/netron) to observe whether the output of the converted onnx model is (hm, reg, wh)
-3. for centerface
-```bash
-# a simple way to change input shape of (model.onnx)
-import onnx
-input_size = (512,512)
-model = onnx.load_model("centerface.onnx")
-d = model.graph.input[0].type.tensor_type.shape.dim
-rate = (input_size[0]//d[2].dim_value,input_size[1]//d[3].dim_value)
-d[0].dim_value = 1
-d[2].dim_value *= rate[0]
-d[3].dim_value *= rate[1]
-for output in model.graph.output:
-    d = output.type.tensor_type.shape.dim
-    d[0].dim_value = 1
-    d[2].dim_value *= rate[0]
-    d[3].dim_value *= rate[1]
-onnx.save_model(model,"centerface_changed_shape.onnx")
-```
 
 ### Example
 ```bash
@@ -49,6 +37,11 @@ cd TensorRT-CenterNet
 mkdir build
 cd build && cmake .. && make
 cd ..
+
+##ctdet | config include/ctdetConfig.h 
+## int 8
+./buildEngine -i model/ctdet_coco_dla_2x.onnx -o model/ctdet_coco_dla_2x.engine -m 2 calib_img_list.txt
+./runDet -e model/ctdet_coco_dla_2x.engine -i test.jpg -c test.h264
 
 ##cthelmet   | config include/ctdetConfig.h
 ## flaot32
@@ -68,6 +61,8 @@ python3 run.py
 
 ### Related projects
 * [TensorRT-Yolov3](https://github.com/lewes6369/TensorRT-Yolov3)
+* [onnx-tensorrt](https://github.com/onnx/onnx-tensorrt)
+* [TensorRT](https://github.com/NVIDIA/TensorRT)
 * [CenterNet](https://github.com/xingyizhou/centernet)
 * [centerface](https://github.com/Star-Clouds/centerface)
 * [netron](https://github.com/lutzroeder/netron)
