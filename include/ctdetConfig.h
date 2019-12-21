@@ -16,7 +16,7 @@ namespace ctdet{
     constexpr static int ouputSize = inputSize/4 ;
     constexpr static int kernelSize = 4 ;
 
-/*
+
     //ctdet  ctdet_coco_dla_2x.onnx
     constexpr static int classNum = 80 ;
     constexpr static float mean[]= {0.408, 0.447, 0.470};
@@ -41,14 +41,14 @@ namespace ctdet{
                                          (char*)"microwave", (char*)"oven", (char*)"toaster", (char*)"sink",
                                          (char*)"refrigerator", (char*)"book", (char*)"clock", (char*)"vase",
                                          (char*)"scissors", (char*)"teddy bear", (char*)"hair drier", (char*)"toothbrush"};
-*/
+/*
 
     //cthelmet
     constexpr static int classNum = 2 ;
     constexpr static float mean[]= {0.485,0.456,0.406};
     constexpr static float std[] = {0.229,0.224,0.225};
     constexpr static char *className[]= {(char*)"person",(char*)"helmet"};
-
+*/
 /*
     //ctface
     constexpr static int classNum = 1 ;
