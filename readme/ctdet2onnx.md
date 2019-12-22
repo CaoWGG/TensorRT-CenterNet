@@ -35,9 +35,11 @@ So I use DCNv2 from mmdetection.
                     deformable_groups=1):
                     pass#.......
     ```
-    Now you can convert the model using Deform Conv to onnx.
-    
-3. For Centernet.
+3. Change import
+   * change (from .DCNv2.dcn_v2 import DCN) to (from .dcn.modules.deform_conv import ModulatedDeformConvPack as DCN) in pose_dla_dcn.py and resnet_dcn.py.
+   * Now you can convert the model using Deform Conv to onnx.
+   
+3. For dla34.
     * convert [ctdet_coco_dla_2x.pth](https://github.com/xingyizhou/CenterNet/blob/master/readme/MODEL_ZOO.md) to ctdet_coco_dla_2x.onnx
         ```python
         from lib.opts import opts
