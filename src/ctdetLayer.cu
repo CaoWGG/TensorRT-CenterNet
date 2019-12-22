@@ -3,11 +3,11 @@
 __device__ float Logist(float data){ return 1./(1. + exp(-data)); }
 
 __global__ void CTdetforward_kernel(const float *hm, const float *reg,const float *wh ,
-        float *output,const int w,const int h,const int classes,const int kernerl_size,const float visthresh  ) {
+        float *output,const int w,const int h,const int classes,const int kernel_size,const float visthresh  ) {
     int idx = (blockIdx.x + blockIdx.y * gridDim.x) * blockDim.x + threadIdx.x;
     if (idx >= w*h) return;
-    int padding = kernerl_size/2;
-    int offset = - padding /2;
+    int padding = (kernel_size-1)/2;
+    int offset = - padding ;
     int stride = w*h;
     int grid_x = idx % w ;
     int grid_y = idx / w ;
@@ -16,11 +16,11 @@ __global__ void CTdetforward_kernel(const float *hm, const float *reg,const floa
     for (cls = 0; cls < classes; ++cls )
     {
         int objIndex = stride * cls + idx;
-        float objProb = hm[objIndex];
+        float objProb = Logist(hm[objIndex]);
         float max=-1;
         int max_index =0;
-        for(l=0 ;l < kernerl_size ; ++l)
-            for(m=0 ; m < kernerl_size ; ++m){
+        for(l=0 ;l < kernel_size ; ++l)
+            for(m=0 ; m < kernel_size ; ++m){
                 int cur_x = offset + l + grid_x;
                 int cur_y = offset + m + grid_y;
                 int cur_index = cur_y * w + cur_x + stride*cls;
@@ -29,8 +29,7 @@ __global__ void CTdetforward_kernel(const float *hm, const float *reg,const floa
                 max_index = (val > max) ? cur_index : max_index;
                 max = (val > max ) ?  val: max ;
             }
-        objProb = Logist(objProb);
-        if((max_index == objIndex) && (objProb > visthresh)){
+        if((max == objProb) && (objProb > visthresh)){
 
             int resCount = (int)atomicAdd(output,1);
             //printf("%d",resCount);
@@ -48,11 +47,11 @@ __global__ void CTdetforward_kernel(const float *hm, const float *reg,const floa
 }
 
 __global__ void CTfaceforward_kernel(const float *hm, const float *wh,const float *reg,const float* landmarks,
-                                    float *output,const int w,const int h,const int classes,const int kernerl_size,const float visthresh  ) {
+                                    float *output,const int w,const int h,const int classes,const int kernel_size,const float visthresh  ) {
     int idx = (blockIdx.x + blockIdx.y * gridDim.x) * blockDim.x + threadIdx.x;
     if (idx >= w*h) return;
-    int padding = kernerl_size/2;
-    int offset = - padding /2;
+    int padding = (kernel_size-1)/2;
+    int offset = - padding;
     int stride = w*h;
     int grid_x = idx % w ;
     int grid_y = idx / w ;
@@ -64,8 +63,8 @@ __global__ void CTfaceforward_kernel(const float *hm, const float *wh,const floa
         float objProb = hm[objIndex];
         float max=-1;
         int max_index =0;
-        for(l=0 ;l < kernerl_size ; ++l)
-            for(m=0 ; m < kernerl_size ; ++m){
+        for(l=0 ;l < kernel_size ; ++l)
+            for(m=0 ; m < kernel_size ; ++m){
                 int cur_x = offset + l + grid_x;
                 int cur_y = offset + m + grid_y;
                 int cur_index = cur_y * w + cur_x + stride*cls;

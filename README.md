@@ -1,7 +1,11 @@
 # TensorRT-CenterNet
 ### demo (GT 1070)
-* ![image](img/show.gif)
-* ![image](img/show2.png)
+* [ctdet_coco_dla_2x](https://github.com/xingyizhou/CenterNet/blob/master/readme/MODEL_ZOO.md)
+    * ![image](img/show3.png)
+* [centerface](https://github.com/Star-Clouds/centerface)
+    * ![image](img/show4.png)
+* cthelmet
+    * ![image](img/show.gif)
 
 ### Performance
 | backbone       | input_size | GPU      | mode   | inference Time |
@@ -11,6 +15,7 @@
 | [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)   | 512x512    | jetson TX2|float16 |    22ms      |
 | [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)       | 512x512    | gtx 1070 |float32 |    24ms    |
 | [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)       | 512x512    | gtx 1070 |int8    |    19.6ms    |
+
 1. support Deform Conv v2.
 2. no nms.
 3. support fp32 fp16 int8 mode.

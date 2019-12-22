@@ -23,16 +23,17 @@ std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace)
 
 
     int channel = ctdet::channel ;
-    int inputSize = ctdet::inputSize;
-    float scale = cv::min(float(inputSize)/img.cols,float(inputSize)/img.rows);
+    int input_w = ctdet::input_w;
+    int input_h = ctdet::input_h;
+    float scale = cv::min(float(input_w)/img.cols,float(input_h)/img.rows);
     auto scaleSize = cv::Size(img.cols * scale,img.rows * scale);
 
     cv::Mat resized;
     cv::resize(img, resized,scaleSize,0,0);
 
 
-    cv::Mat cropped = cv::Mat::zeros(inputSize,inputSize,CV_8UC3);
-    cv::Rect rect((inputSize- scaleSize.width)/2, (inputSize-scaleSize.height)/2, scaleSize.width,scaleSize.height);
+    cv::Mat cropped = cv::Mat::zeros(input_h,input_w,CV_8UC3);
+    cv::Rect rect((input_w- scaleSize.width)/2, (input_h-scaleSize.height)/2, scaleSize.width,scaleSize.height);
 
     resized.copyTo(cropped(rect));
 
@@ -48,9 +49,9 @@ std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace)
     cv::split(img_float, input_channels);
 
     // normalize
-    std::vector<float> result(inputSize*inputSize*channel);
+    std::vector<float> result(input_h*input_w*channel);
     auto data = result.data();
-    int channelLength = inputSize * inputSize;
+    int channelLength = input_h * input_w;
     for (int i = 0; i < channel; ++i) {
         cv::Mat normed_channel = (input_channels[i]-ctdet::mean[i])/ctdet::std[i];
         memcpy(data,normed_channel.data,channelLength*sizeof(float));
@@ -63,10 +64,11 @@ void postProcess(std::vector<Detection> & result,const cv::Mat& img, const bool&
 {
     using namespace cv;
     int mark;
-    int inputSize = ctdet::inputSize;
-    float scale = min(float(inputSize)/img.cols,float(inputSize)/img.rows);
-    float dx = (inputSize - scale * img.cols) / 2;
-    float dy = (inputSize - scale * img.rows) / 2;
+    int input_w = ctdet::input_w;
+    int input_h = ctdet::input_h;
+    float scale = min(float(input_w)/img.cols,float(input_h)/img.rows);
+    float dx = (input_w - scale * img.cols) / 2;
+    float dy = (input_h - scale * img.rows) / 2;
     for(auto&item:result)
     {
         float x1 = (item.bbox.x1 - dx) / scale ;
@@ -102,10 +104,11 @@ void postProcess(std::vector<Detection> & result,const int &img_w ,const int& im
 
 
     int mark;
-    int inputSize = ctdet::inputSize;
-    float scale = std::min(float(inputSize)/img_w,float(inputSize)/img_h);
-    float dx = (inputSize - scale * img_w) / 2;
-    float dy = (inputSize - scale * img_h) / 2;
+    int input_w = ctdet::input_w;
+    int input_h = ctdet::input_h;
+    float scale = std::min(float(input_w)/img_w,float(input_h)/img_h);
+    float dx = (input_w - scale * img_w) / 2;
+    float dy = (input_h - scale * img_h) / 2;
     //printf("%f %f %f %d %d \n",scale,dx,dy,img_w,img_h);
     for(auto&item:result)
     {
@@ -159,16 +162,16 @@ void drawImg(const std::vector<Detection> & result,cv::Mat& img,const std::vecto
 
         cv::rectangle(img, cv::Point(item.bbox.x1,item.bbox.y1),
                       cv::Point(item.bbox.x2 ,item.bbox.y2),
-                      color[item.classId], box_think, 8, 0);
+                      color[item.classId], box_think*2, 8, 0);
         if(!forwardFace){
             cv::putText(img,label,
                     cv::Point(item.bbox.x2,item.bbox.y2 - size.height),
-                    cv::FONT_HERSHEY_COMPLEX, label_scale , color[item.classId], box_think/3, 8, 0);
+                    cv::FONT_HERSHEY_COMPLEX, label_scale , color[item.classId], box_think/2, 8, 0);
         }
         if(forwardFace)
         {
             for(mark=0;mark<5; ++mark )
-            cv::circle(img, cv::Point(item.marks[mark].x, item.marks[mark].y), 2, cv::Scalar(255, 255, 0), 2);
+            cv::circle(img, cv::Point(item.marks[mark].x, item.marks[mark].y), 1, cv::Scalar(255, 255, 0), 1);
         }
 
     }

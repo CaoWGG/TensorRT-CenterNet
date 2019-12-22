@@ -14,8 +14,8 @@ namespace nvinfer1
         const std::string &calibTablePath):batchSize(bacthSize),calibTablePath(calibTablePath),imageIndex(0),forwardFace(
             false){
         int inputChannel = ctdet::channel;
-        int inputH = ctdet::inputSize;
-        int inputW = ctdet::inputSize;
+        int inputH = ctdet::input_h;
+        int inputW = ctdet::input_w;
         inputCount = bacthSize*inputChannel*inputH*inputW;
         std::fstream f(imgPath);
         if(f.is_open()){

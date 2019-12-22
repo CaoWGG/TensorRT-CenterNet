@@ -153,11 +153,11 @@ namespace ctdet
         if (forwardFace){
             CTfaceforward_gpu(static_cast<const float *>(mCudaBuffers[1]),static_cast<const float *>(mCudaBuffers[2]),
                               static_cast<const float *>(mCudaBuffers[3]),static_cast<const float *>(mCudaBuffers[4]),static_cast<float *>(cudaOutputBuffer),
-                              ouputSize,ouputSize,classNum,kernelSize,visThresh);
+                              input_w/4,input_h/4,classNum,kernelSize,visThresh);
         } else{
             CTdetforward_gpu(static_cast<const float *>(mCudaBuffers[1]),static_cast<const float *>(mCudaBuffers[2]),
                          static_cast<const float *>(mCudaBuffers[3]),static_cast<float *>(cudaOutputBuffer),
-                         ouputSize,ouputSize,classNum,kernelSize,visThresh);
+                             input_w/4,input_h/4,classNum,kernelSize,visThresh);
         }
 
         CUDA_CHECK(cudaMemcpyAsync(outputData, cudaOutputBuffer, outputBufferSize, cudaMemcpyDeviceToHost, mCudaStream));
