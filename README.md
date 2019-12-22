@@ -11,7 +11,7 @@
 | [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)   | 512x512    | jetson TX2|float16 |    22ms      |
 | [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)       | 512x512    | gtx 1070 |float32 |    24ms    |
 | [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)       | 512x512    | gtx 1070 |int8    |    19.6ms    |
-1. support deform conv v2.
+1. support Deform Conv v2.
 2. no nms.
 3. support fp32 fp16 int8 mode.
 
@@ -28,7 +28,7 @@ jetpack 4.2
 ```
 
 ### Models
-1. Convert [CenterNet](https://github.com/xingyizhou/centernet) model to onnx.
+1. Convert [CenterNet](https://github.com/xingyizhou/centernet) model to onnx. See [here](readme/ctdet2onnx.md) for details.
 2. Use [netron](https://github.com/lutzroeder/netron) to observe whether the output of the converted onnx model is (hm, reg, wh)
 
 ### Example
@@ -41,7 +41,7 @@ cd ..
 
 ##ctdet | config include/ctdetConfig.h 
 ## int 8
-./buildEngine -i model/ctdet_coco_dla_2x.onnx -o model/ctdet_coco_dla_2x.engine -m 2 calib_img_list.txt
+./buildEngine -i model/ctdet_coco_dla_2x.onnx -o model/ctdet_coco_dla_2x.engine -m 2 -c calib_img_list.txt
 ./runDet -e model/ctdet_coco_dla_2x.engine -i test.jpg -c test.h264
 
 ##cthelmet   | config include/ctdetConfig.h
@@ -68,3 +68,4 @@ python3 run.py
 * [centerface](https://github.com/Star-Clouds/centerface)
 * [netron](https://github.com/lutzroeder/netron)
 * [cpp-optparse](https://github.com/weisslj/cpp-optparse)
+
