@@ -38,7 +38,7 @@ So I use DCNv2 from mmdetection.
     Now you can convert the model using Deform Conv to onnx.
     
 3. For Centernet.
-    * convert ctdet_coco_dla_2x.pth to ctdet_coco_dla_2x.onnx
+    * convert [ctdet_coco_dla_2x.pth](https://github.com/xingyizhou/CenterNet/blob/master/readme/MODEL_ZOO.md) to ctdet_coco_dla_2x.onnx
         ```python
         from lib.opts import opts
         from lib.models.model import create_model, load_model
