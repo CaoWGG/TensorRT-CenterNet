@@ -16,6 +16,7 @@
 | [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)| 512x512    | gtx 1070 |float32 |    24ms    |
 | [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)| 512x512    | gtx 1070 |int8    |    19.6ms    |
 | [dla34v0](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/dlav0.py)| 512x512    | gtx 1070 |float32    |    12.6ms    |
+| [dla34v0](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/dlav0.py)| 512x512    | gtx 1070 |int8    |    6.76ms    |
 | [resdcn101](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | gtx 1070 |float32    |    20.9ms    |
 | [resdcn18](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | gtx 1070 |float32    |    5.81ms    |
 | [resdcn18](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | gtx 1070 |int8    |    3.63ms    |
@@ -25,16 +26,17 @@
 
 ### Eval Result
 
-|model|GPU|mode|AP<sub>trt</sub>/AP<sub>paper</sub>|AP<sub>50</sub>|AP<sub>75</sub>|AP<sub>S</sub>|AP<sub>M</sub>|AP<sub>L</sub>|
+|model|GPU|mode|AP<sup>trt</sup>/AP<sup>paper</sup>|AP<sup>trt</sup><sub>50</sub>|AP<sup>trt</sup><sub>75</sub>|AP<sup>trt</sup><sub>S</sub>|AP<sup>trt</sup><sub>M</sub>|AP<sup>trt</sup><sub>L</sub>|
 |---|---|---|---|---|---|---|---|---|
 |ctdet_coco_dla_2x|gtx 1070|float32|0.365/0.374|0.543|0.390|0.164|0.398|0.536|
 |ctdet_coco_dlav0_1x|gtx 1070|float32|0.324/--|0.511|0.343|0.140|0.350|0.476|
+|ctdet_coco_dlav0_1x|gtx 1070|int8|0.293/--|0.465|0.309|0.123|0.317|0.443|
 |ctdet_coco_resdcn101|gtx 1070|float32|0.332/0.346|0.516|0.349|0.115|0.367|0.531|
 |ctdet_coco_resdcn18|gtx 1070|float32|0.277/0.281|0.448|0.286|0.083|0.290|0.454|
 |ctdet_coco_resdcn18|gtx 1070|int8|0.238/0.281|0.394|0.246|0.062|0.254|0.402|
 
 #### notes
- * I show test AP with no augmentation.
+ * cocoval2017 test AP with no augmentation.
  * input_szie = 512x512
  * thresh = 0.01
  * maxpool kernel_size = 3
