@@ -2,6 +2,9 @@ from ctypes import c_float,c_int,Structure,POINTER,CDLL,RTLD_GLOBAL,c_char_p,c_v
 import cv2
 import numpy as np
 import os
+from pycocotools.cocoeval import COCOeval
+import pycocotools.coco as coco
+from tqdm import tqdm
 
 class BOX(Structure):
     _fields_ = [("x1", c_float),
@@ -84,26 +87,74 @@ def show_img(pred,image):
                     bbox_thick // 2)
     return image
 
+def top_k(pred,K=100):
+    boxs_list = []
+    for j in range(pred.num):
+        x1, y1, x2, y2, classId, prob = pred.det[j].bbox.x1, pred.det[j].bbox.y1, \
+                                    pred.det[j].bbox.x2, pred.det[j].bbox.y2, pred.det[j].classId, pred.det[j].prob
+        boxs_list.append([x1,y1,x2,y2,classId,prob])
+    boxs_list = np.array(boxs_list)
+    if len(boxs_list)>K:
+        prob = boxs_list[:,-1]
+        top_arg = np.argsort(prob)[::-1][:K]
+        boxs_list = boxs_list[top_arg]
+    return boxs_list
 ### you need config include/ctdetConfig.h classNum and visThresh
-class_name = ['person','helmet']
+## for coco
+class_name = [
+       'person', 'bicycle', 'car', 'motorcycle', 'airplane',
+      'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant',
+      'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse',
+      'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack',
+      'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis',
+      'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove',
+      'skateboard', 'surfboard', 'tennis racket', 'bottle', 'wine glass',
+      'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich',
+      'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake',
+      'chair', 'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv',
+      'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
+      'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
+      'scissors', 'teddy bear', 'hair drier', 'toothbrush']
+valid_ids = [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13,
+            14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+            24, 25, 27, 28, 31, 32, 33, 34, 35, 36,
+            37, 38, 39, 40, 41, 42, 43, 44, 46, 47,
+            48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+            58, 59, 60, 61, 62, 63, 64, 65, 67, 70,
+            72, 73, 74, 75, 76, 77, 78, 79, 80, 81,
+            82, 84, 85, 86, 87, 88, 89, 90]
+
+coco_val_ann = '/data/DataSet/coco2017/annotations/instances_val2017.json'
+coco_val_dir = '/data/DataSet/coco2017/val2017'
+data = coco.COCO(coco_val_ann)
+
 set_device(0)
-net = init_net(b'model/ctdet_helmet.engine')
-vid = cv2.VideoCapture('test.h264')
-cv2.namedWindow('',cv2.WINDOW_NORMAL)
-cv2.resizeWindow('',1024,768)
-while True:
-    ret,frame = vid.read()
-    if not ret:
-        break
-    img_h,img_w,_ = frame.shape
-    img = img_preprocess(frame,(512,512),mean = (0.485,0.456,0.406),std =(0.229,0.224,0.225))
+net = init_net(b'/home/cao/CLionProjects/ctdet_trt/model/ctdet_coco_resdcn18_int8.engine')
+detections = []
+for img_id in tqdm(data.getImgIds()):
+    img_name = os.path.join(coco_val_dir,data.loadImgs(ids=[img_id])[0]['file_name']).strip()
+    frame  = cv2.imread(img_name)
+    img_h, img_w, _ = frame.shape
+    img = img_preprocess(frame, (512, 512), mean=(0.408, 0.447, 0.470), std=(0.289, 0.274, 0.278))
     img_p = ndarray_to_image(img)
     pred = inference(net,img_p,img_w,img_h)
-    free(img_p)
-    show_img(pred,frame)
+    boxs = top_k(pred)
+    for i,det in enumerate(boxs):
+        x, y, x1, y1, cls, conf = det[:6]
+        detection = {
+            "image_id": img_id,
+            "category_id": int(valid_ids[int(cls)]),
+            "bbox": [x, y, x1 - x, y1 - y],
+            "score": float("{:.2f}".format(conf))
+        }
+        detections.append(detection)
+
     free_result(pred)
-    cv2.imshow('',frame)
-    if cv2.waitKey(1)& 0xff == ord('q'):
-        break
-vid.release()
-cv2.destroyAllWindows()
+    free(img_p)
+
+coco_dets = data.loadRes(detections)
+coco_eval = COCOeval(data, coco_dets, "bbox")
+coco_eval.evaluate()
+coco_eval.accumulate()
+coco_eval.summarize()

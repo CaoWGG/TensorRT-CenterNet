@@ -5,18 +5,19 @@
 #include <ctdetNet.h>
 #include <python_api.h>
 
-extern "C" void* init_Net(char* modelpath)
+void* initNet(char* modelpath)
 {
     ctdet::ctdetNet *net=new ctdet::ctdetNet(modelpath);
     return net;
 }
 
-extern "C" void setdevice(int id)
+void setDevice(int id)
 {
     cudaSetDevice(id);
 }
 
-extern "C" detResult predict(void* net,void* inputData,int img_w,int img_h)
+
+detResult predict(void* net, void * inputData,int img_w,int img_h)
 {
 
     int outputCount = ((ctdet::ctdetNet*)net)->outputBufferSize;
@@ -35,24 +36,25 @@ extern "C" detResult predict(void* net,void* inputData,int img_w,int img_h)
     return det;
 }
 
-extern "C" void free_Net(void * p)
+void freeNet(void * p)
 {
     delete (ctdet::ctdetNet*)p;
 }
 
-extern "C" void free_result(detResult *p)
+void freeResult(detResult *p)
 {
     free(p->det);
 }
 
-extern "C" void* ndarray_to_image(unsigned char* src, long* shape, long* strides)
+void* ndarrayToImage(float * src, long* shape, long* strides)
 {
     int h = shape[0];
     int w = shape[1];
     int c = shape[2];
-    int step_h = strides[0];
-    int step_w = strides[1];
     int step_c = strides[2];
+    int step_h = strides[0]/step_c;
+    int step_w = strides[1]/step_c;
+    step_c = 1;
     //printf("%d %d %d %d %d %d \n",h,w,c,step_h,step_w,step_c);
     float *data=(float*)malloc(h*w*c* sizeof(float));
     int i, j, k;
@@ -63,11 +65,11 @@ extern "C" void* ndarray_to_image(unsigned char* src, long* shape, long* strides
 
                 index1 = k*w*h + i*w + j;
                 index2 = step_h*i + step_w*j + step_c*k;
-                data[index1] = (src[index2]/255. - ctdet::mean[k])/ctdet::std[k];
+                data[index1] = src[index2];
                 //printf("%d %d %d %d %d %f\n",i,j,k,index1,index2,data[index1]);
             }
         }
     }
-
     return (void*)data;
 }
+
