@@ -71,7 +71,7 @@ So I use DCNv2 from mmdetection.
             ret = []  ## change dict to list
             for head in self.heads:
                 ret.append(self.__getattr__(head)(x))
-            return [ret]
+            return ret
         ## for resdcn
         def resnet_dcn_forward(self, x):
             x = self.conv1(x)
@@ -87,7 +87,7 @@ So I use DCNv2 from mmdetection.
             ret = []  ## change dict to list
             for head in self.heads:
                 ret.append(self.__getattr__(head)(x))
-            return [ret]
+            return ret
         
         forward = {'dla':pose_dla_forward,'dlav0':dlav0_forward,'resdcn':resnet_dcn_forward}
         
