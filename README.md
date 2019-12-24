@@ -48,6 +48,7 @@
 ubuntu 1604
 TensorRT 5.0
 onnx-tensorrt v5.0
+cuda 9.0
 ```
 2. jetson TX2
 ```
