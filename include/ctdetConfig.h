@@ -7,7 +7,7 @@
 
 namespace ctdet{
 
-    constexpr static float visThresh = 0.01;
+    constexpr static float visThresh = 0.3;
     constexpr static int kernelSize = 3 ;  /// nms maxpool size
 
 
