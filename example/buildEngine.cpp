@@ -2,11 +2,12 @@
 // Created by cao on 19-10-26.
 //
 
-#include <ctdetNet.h>
+
 #include <argparse.h>
 #include <string>
-#include <utils.h>
 #include <iostream>
+#include "ctdetNet.h"
+#include "utils.h"
 
 int main(int argc, const char** argv)
 {

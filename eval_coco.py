@@ -5,6 +5,7 @@ import os
 from pycocotools.cocoeval import COCOeval
 import pycocotools.coco as coco
 from tqdm import tqdm
+import sys
 
 class BOX(Structure):
     _fields_ = [("x1", c_float),
@@ -130,7 +131,7 @@ coco_val_dir = '/data/DataSet/coco2017/val2017'
 data = coco.COCO(coco_val_ann)
 
 set_device(0)
-net = init_net(b'/home/cao/CLionProjects/ctdet_trt/model/ctdet_coco_resdcn18_int8.engine')
+net = init_net(bytes(sys.argv[1],encoding = "utf8"))
 detections = []
 for img_id in tqdm(data.getImgIds()):
     img_name = os.path.join(coco_val_dir,data.loadImgs(ids=[img_id])[0]['file_name']).strip()

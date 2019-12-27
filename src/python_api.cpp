@@ -2,8 +2,8 @@
 // Created by cao on 19-11-7.
 //
 
-#include <ctdetNet.h>
-#include <python_api.h>
+#include "ctdetNet.h"
+#include "python_api.h"
 
 void* initNet(char* modelpath)
 {
@@ -72,4 +72,3 @@ void* ndarrayToImage(float * src, long* shape, long* strides)
     }
     return (void*)data;
 }
-

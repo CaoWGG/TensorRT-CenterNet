@@ -6,9 +6,10 @@
 #include <argparse.h>
 #include <string>
 #include <iostream>
-#include <ctdetNet.h>
-#include <utils.h>
 #include <memory>
+#include "ctdetNet.h"
+#include "utils.h"
+
 
 int main(int argc, const char** argv){
     optparse::OptionParser parser;

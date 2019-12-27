@@ -11,8 +11,8 @@
 #include <numeric>
 #include "NvInferPlugin.h"
 #include "NvOnnxParser.h"
-#include <ctdetConfig.h>
-#include <utils.h>
+#include "ctdetConfig.h"
+#include "utils.h"
 #include "NvOnnxParserRuntime.h"
 
 namespace ctdet

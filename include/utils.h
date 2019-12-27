@@ -9,15 +9,15 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
-#include <cublas_v2.h>
-#include <cudnn.h>
 #include <assert.h>
 #include "NvInfer.h"
-#include <opencv2/opencv.hpp>
-
+#include "opencv2/opencv.hpp"
+#include "cuda.h"
+#include "cuda_runtime.h"
+#include "numeric"
 
 #ifndef BLOCK
-#define BLOCK 512
+#define BLOCK 1024
 #endif
 #ifndef CUDA_CHECK
 #define CUDA_CHECK(callstr)                                                                    \
@@ -51,7 +51,6 @@ public:
             totalTime += elem.second.time;
             maxLayerNameLength = std::max(maxLayerNameLength, static_cast<int>(elem.first.size()));
         }
-
 //        auto old_settings = std::cout.flags();
 //        auto old_precision = std::cout.precision();
 //        // Output header
@@ -162,8 +161,6 @@ struct Detection{
     landmarks marks[5];
 };
 
-
-extern dim3 cudaGridSize(uint n);
 extern std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace);
 extern void postProcess(std::vector<Detection> & result,const cv::Mat& img, const bool& forwardFace);
 extern void postProcess(std::vector<Detection> & result,const int &img_w ,const int& img_h, const bool& forwardFace);

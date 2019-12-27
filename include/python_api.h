@@ -4,8 +4,8 @@
 
 #ifndef CTDET_TRT_PYTHON_API_H
 #define CTDET_TRT_PYTHON_API_H
-#include <utils.h>
-#include <ctdetConfig.h>
+#include "utils.h"
+#include "ctdetConfig.h"
 typedef struct
 {
     int num;

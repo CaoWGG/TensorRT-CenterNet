@@ -5,7 +5,7 @@ So I use DCNv2 from mmdetection.
         ```bash
         cp -r dcn lib/models/netowrks
         ```
-    * upgrade pytorch to 1.0+
+    * upgrade pytorch to 1.0-1.1
     * complie Deform Conv
         ```bash
         cd lib/models/netowrks/dcn
@@ -94,7 +94,7 @@ So I use DCNv2 from mmdetection.
         opt = opts().init()  ## change lib/opts.py add_argument('task', default='ctdet'....) to add_argument('--task', default='ctdet'....)
         opt.arch = 'dla_34'
         opt.heads = OrderedDict([('hm', 80), ('reg', 2), ('wh', 2)])
-        opt.head_conv = 256 if 'dla' in opt.arch else opt.head_conv=64
+        opt.head_conv = 256 if 'dla' in opt.arch else 64
         print(opt)
         model = create_model(opt.arch, opt.heads, opt.head_conv)
         model.forward = MethodType(forward[opt.arch.split('_')[0]], model)

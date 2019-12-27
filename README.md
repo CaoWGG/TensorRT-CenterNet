@@ -20,7 +20,7 @@
 | [resdcn101](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | gtx 1070 |float32    |    20.9ms    |
 | [resdcn18](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | gtx 1070 |float32    |    5.81ms    |
 | [resdcn18](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | gtx 1070 |int8    |    3.63ms    |
-1. support Deform Conv v2.  
+1. support Deform Conv v2.
 2. no nms.
 3. support fp32 fp16 int8 mode.
 
@@ -30,21 +30,22 @@
 |---|---|---|---|---|---|---|---|---|
 |ctdet_coco_dla_2x|gtx 1070|float32|0.365/0.374|0.543|0.390|0.164|0.398|0.536|
 |ctdet_coco_dlav0_1x|gtx 1070|float32|0.324/--|0.511|0.343|0.140|0.350|0.476|
-|ctdet_coco_dlav0_1x|gtx 1070|int8|0.293/--|0.465|0.309|0.123|0.317|0.443|
+|ctdet_coco_dlav0_1x|gtx 1070|int8|0.295/--|0.468|0.311|0.123|0.318|0.446|
 |ctdet_coco_resdcn101|gtx 1070|float32|0.332/0.346|0.516|0.349|0.115|0.367|0.531|
 |ctdet_coco_resdcn18|gtx 1070|float32|0.277/0.281|0.448|0.286|0.083|0.290|0.454|
-|ctdet_coco_resdcn18|gtx 1070|int8|0.238/0.281|0.394|0.246|0.062|0.254|0.402|
+|ctdet_coco_resdcn18|gtx 1070|int8|0.242/0.281|0.401|0.250|0.061|0.255|0.409|
 
 #### notes
  * cocoval2017 test AP with no augmentation.
  * input_szie = 512x512
  * thresh = 0.01
  * maxpool kernel_size = 3
- * calib_img_list.txt : random sample 700 images from COCO2017/val2017
+ * calib_img_list.txt : random sample 200 images from COCO2017/val2017
 
 ### Enviroments
 1. gtx 1070
 ```
+pytorch 1.0-1.1
 ubuntu 1604
 TensorRT 5.0
 onnx-tensorrt v5.0
@@ -68,8 +69,8 @@ cd build && cmake .. && make
 cd ..
 
 ##ctdet | config include/ctdetConfig.h 
-## int 8
-./buildEngine -i model/ctdet_coco_dla_2x.onnx -o model/ctdet_coco_dla_2x.engine -m 2 -c calib_img_list.txt
+## float32
+./buildEngine -i model/ctdet_coco_dla_2x.onnx -o model/ctdet_coco_dla_2x.engine 
 ./runDet -e model/ctdet_coco_dla_2x.engine -i test.jpg -c test.h264
 
 ##cthelmet   | config include/ctdetConfig.h
@@ -85,7 +86,7 @@ cd ..
 ./runDet -e model/centerface.engine -i test.jpg -c test.h264
 
 ## run eval_coco.py | conifg your cocodaset and ctdet_coco engine 
-python3 eval_coco.py
+python3 eval_coco.py model/ctdet_coco_dla_2x.engine
 ```
 
 ### Related projects

@@ -2,9 +2,9 @@
 // Created by cao on 19-12-16.
 //
 
-#include <entroyCalibrator.h>
-#include <utils.h>
-#include <ctdetConfig.h>
+#include "entroyCalibrator.h"
+#include "utils.h"
+#include "ctdetConfig.h"
 #include <fstream>
 #include <iterator>
 namespace nvinfer1

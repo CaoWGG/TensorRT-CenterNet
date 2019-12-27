@@ -5,7 +5,7 @@
 #ifndef CTDET_TRT_ENTROYCALIBRATOR_H
 #define CTDET_TRT_ENTROYCALIBRATOR_H
 
-#include <NvInfer.h>
+#include "NvInfer.h"
 #include <vector>
 #include <string>
 namespace nvinfer1 {

@@ -1,22 +1,10 @@
 //
 // Created by cao on 19-10-26.
 //
-#include <utils.h>
-#include <ctdetConfig.h>
+#include "utils.h"
+#include "ctdetConfig.h"
 #include <sstream>
-dim3 cudaGridSize(uint n)
-{
-    uint k = (n - 1) /BLOCK + 1;
-    uint x = k ;
-    uint y = 1 ;
-    if (x > 65535 )
-    {
-        x = ceil(sqrt(x));
-        y = (n - 1 )/(x*BLOCK) + 1;
-    }
-    dim3 d = {x,y,1} ;
-    return d;
-}
+
 
 std::vector<float> prepareImage(cv::Mat& img, const bool& forwardFace)
 {

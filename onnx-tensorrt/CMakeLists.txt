@@ -241,7 +241,7 @@ else()
   add_library(nvonnxparser_plugin STATIC ${PLUGIN_SOURCES})
 endif()
 target_include_directories(nvonnxparser_plugin PUBLIC ${CUDA_INCLUDE_DIRS} ${ONNX_INCLUDE_DIRS} ${TENSORRT_INCLUDE_DIR} ${CUDNN_INCLUDE_DIR})
-target_link_libraries(nvonnxparser_plugin ${TENSORRT_LIBRARY})
+target_link_libraries(nvonnxparser_plugin ${TENSORRT_LIBRARY} cuda cudart cublas)
 
 # --------------------------------
 # Importer library
@@ -255,9 +255,9 @@ target_link_libraries(nvonnxparser PUBLIC onnx_proto nvonnxparser_plugin ${PROTO
 #  LINK_DEPENDS ${PARSER_LINKER_SCRIPT}
 #  LINK_FLAGS "-Wl,--version-script=${PARSER_LINKER_SCRIPT}"
 #)
-add_library(nvonnxparser_static STATIC ${IMPORTER_SOURCES})
-target_include_directories(nvonnxparser_static PUBLIC ${CUDA_INCLUDE_DIRS} ${ONNX_INCLUDE_DIRS} ${TENSORRT_INCLUDE_DIR} ${CUDNN_INCLUDE_DIR})
-target_link_libraries(nvonnxparser_static PUBLIC onnx_proto nvonnxparser_plugin ${PROTOBUF_LIBRARY} ${CUDNN_LIBRARY} ${TENSORRT_LIBRARY})
+#add_library(nvonnxparser_static STATIC ${IMPORTER_SOURCES})
+#target_include_directories(nvonnxparser_static PUBLIC ${CUDA_INCLUDE_DIRS} ${ONNX_INCLUDE_DIRS} ${TENSORRT_INCLUDE_DIR} ${CUDNN_INCLUDE_DIR})
+#target_link_libraries(nvonnxparser_static PUBLIC onnx_proto nvonnxparser_plugin ${PROTOBUF_LIBRARY} ${CUDNN_LIBRARY} ${TENSORRT_LIBRARY})
 
 # --------------------------------
 # Runtime library
@@ -271,9 +271,9 @@ target_link_libraries(nvonnxparser_runtime PUBLIC nvonnxparser_plugin ${CUDNN_LI
 #  LINK_DEPENDS ${RUNTIME_LINKER_SCRIPT}
 #  LINK_FLAGS "-Wl,--version-script=${RUNTIME_LINKER_SCRIPT}"
 #)
-add_library(nvonnxparser_runtime_static STATIC ${RUNTIME_SOURCES})
-target_include_directories(nvonnxparser_runtime_static PUBLIC ${CUDA_INCLUDE_DIRS} ${TENSORRT_INCLUDE_DIR} ${CUDNN_INCLUDE_DIR})
-target_link_libraries(nvonnxparser_runtime_static PUBLIC nvonnxparser_plugin ${CUDNN_LIBRARY} ${TENSORRT_LIBRARY})
+# add_library(nvonnxparser_runtime_static STATIC ${RUNTIME_SOURCES})
+# target_include_directories(nvonnxparser_runtime_static PUBLIC ${CUDA_INCLUDE_DIRS} ${TENSORRT_INCLUDE_DIR} ${CUDNN_INCLUDE_DIR})
+# target_link_libraries(nvonnxparser_runtime_static PUBLIC nvonnxparser_plugin ${CUDNN_LIBRARY} ${TENSORRT_LIBRARY})
 
 # --------------------------------
 # Onnxifi library
