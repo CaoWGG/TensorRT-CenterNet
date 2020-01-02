@@ -10,14 +10,15 @@
 #include <iomanip>
 #include <algorithm>
 #include <assert.h>
+#include <numeric>
 #include "NvInfer.h"
 #include "opencv2/opencv.hpp"
 #include "cuda.h"
 #include "cuda_runtime.h"
-#include "numeric"
+
 
 #ifndef BLOCK
-#define BLOCK 1024
+#define BLOCK 512
 #endif
 #ifndef CUDA_CHECK
 #define CUDA_CHECK(callstr)                                                                    \

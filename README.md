@@ -15,11 +15,17 @@
 | [mobilenetv2](https://github.com/CaoWGG/Mobilenetv2-CenterNet)   | 512x512    | jetson TX2|float16 |    22ms      |
 | [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)| 512x512    | gtx 1070 |float32 |    24ms    |
 | [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)| 512x512    | gtx 1070 |int8    |    19.6ms    |
+| [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)| 512x512    | jetson TX2 |fp32    |    209ms    |
+| [dla34](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/pose_dla_dcn.py)| 512x512    | jetson TX2 |fp16    |    186ms    |
 | [dla34v0](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/dlav0.py)| 512x512    | gtx 1070 |float32    |    12.6ms    |
 | [dla34v0](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/dlav0.py)| 512x512    | gtx 1070 |int8    |    6.76ms    |
+| [dla34v0](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/dlav0.py)| 512x512    | jetson TX2 |fp32    |    114ms    |
+| [dla34v0](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/dlav0.py)| 512x512    | jetson TX2 |fp16    |    80ms    |
 | [resdcn101](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | gtx 1070 |float32    |    20.9ms    |
 | [resdcn18](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | gtx 1070 |float32    |    5.81ms    |
 | [resdcn18](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | gtx 1070 |int8    |    3.63ms    |
+| [resdcn18](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | jetson TX2 |fp32    |    54ms    |
+| [resdcn18](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/networks/resnet_dcn.py)| 512x512    | jetson TX2 |fp16    |    41ms    |
 1. support Deform Conv v2.
 2. no nms.
 3. support fp32 fp16 int8 mode.
@@ -40,7 +46,7 @@
  * input_szie = 512x512
  * thresh = 0.01
  * maxpool kernel_size = 3
- * calib_img_list.txt : random sample 200 images from COCO2017/val2017
+ * calib_img_list.txt : random sample 700 images from COCO2017/val2017
 
 ### Enviroments
 1. gtx 1070
